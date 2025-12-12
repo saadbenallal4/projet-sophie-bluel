@@ -125,6 +125,40 @@ li:hover {
 	text-align: center;
 	margin-bottom: 1em;
 }
+
+.filters {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
+
+
+.filter-btn {
+  background-color: white;
+  border: 1px solid #1D6154;
+  color: #1D6154;
+  padding: 9px 22px;
+  border-radius: 60px;
+  cursor: pointer;
+  font-family: 'Syne', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+
+.filter-btn:hover {
+  background-color: #1D6154;
+  color: white;
+}
+
+
+.filter-btn.active {
+  background-color: #1D6154;
+  color: white;
+}
+
 .gallery {
 	width: 100%;
 	display: grid;
