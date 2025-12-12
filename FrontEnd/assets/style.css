@@ -52,12 +52,15 @@ body {
 	margin:auto;
 	font-family: 'Work Sans' ;
 	font-size: 14px;
+	background-color: #FFFEF8;
 }
 header {
 	display: flex;
 	justify-content: space-between;
 	margin: 50px 0
 }
+
+
 section {
 	margin: 50px 0
 }
@@ -219,4 +222,213 @@ footer nav ul {
 	justify-content: flex-end;
 	margin: 2em
 }
+
+/* ---- PAGE LOGIN ---- */
+
+body.login-page header {
+    width: 80%;
+    margin: 0 auto;
+    padding-top: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Syne', sans-serif;
+}
+
+body.login-page header img {
+    width: 20px;
+}
+
+
+body.login-page header nav ul {
+    display: flex;
+    gap: 15px;
+}
+
+body.login-page header nav ul li a {
+    text-decoration: none;
+    color: #1D6154;
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+body.login-page header nav ul li a:hover {
+    color: #0E3F35;
+}
+
+#login {
+    width: 40%;
+    margin: 120px auto;
+    text-align: center;
+}
+
+#login h2 {
+    font-family: Syne, sans-serif;
+    font-size: 30px;
+    color: #1D6154;
+    margin-bottom: 40px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.login-form label {
+    text-align: left;
+    font-weight: 600;
+    font-family: Syne, sans-serif;
+    color: #1D6154;
+    margin-bottom: 5px;
+}
+
+
+.login-form input {
+    height: 45px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    padding: 0 10px;
+	box-shadow: 0px 4px 14px rgba(0,0,0,0.09);
+
+}
+
+.login-form button {
+    margin-top: 20px;
+    background-color: #1D6154;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    padding: 12px 30px;       
+    cursor: pointer;
+    font-family: Syne;
+    font-weight: 600;
+    width: auto;             
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}       
+
+.login-form button:hover {
+    background-color: #0e3f35;
+}
+
+body.login-page footer {
+    background-color: white;   
+    width: 100%;
+    padding: 20px 40px;
+}
+
+body.login-page footer ul {
+    list-style: none;
+    text-align: right;   
+}
+
+body.login-page footer ul li {
+    font-family: 'Syne', sans-serif;
+    color: #1D6154;
+}
+
+.forgot {
+    display: block;
+    margin-top: 15px;
+    text-align: center;
+    text-decoration: underline;
+    color: #444;
+    font-family: Syne, sans-serif;
+    font-size: 14px;
+}
+
+/* Bandeau mode édition */
+.edit-banner {
+    background: black;
+    color: white;
+    text-align: center;
+    padding: 12px 0;
+    font-family: 'Syne', sans-serif;
+}
+
+/* Bouton modifier */
+.edit-btn {
+    margin-left: 15px;
+    font-family: 'Syne';
+    font-size: 14px;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+/* ---- MODALE ---- */
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.modal {
+    background: white;
+    width: 600px;
+    border-radius: 15px;
+    padding: 30px;
+    position: relative;
+}
+
+.close-modal {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.back-arrow {
+    cursor: pointer;
+    font-size: 22px;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
+
+.modal-gallery {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+}
+
+.modal-gallery img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+
+.modal-separator {
+    width: 100%;
+    height: 1px;
+    background: #ccc;
+    margin: 30px 0;
+}
+
+.open-add-photo,
+.validate-photo {
+    background-color: #1D6154;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    padding: 12px 30px;
+    cursor: pointer;
+    display: block;
+    margin: 0 auto;
+}
+
 

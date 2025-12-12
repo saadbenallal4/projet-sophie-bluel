@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Sophie Bluel</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="./assets/style.css">
+</head>
+
+<body class="login-page">
+<header>
+    <h1>Sophie Bluel <span>Architecte d’intérieur</span></h1>
+    <nav>
+        <ul>
+            <li><a href="./index.html">projets</a></li>
+            <li><a href="./index.html#contact">contact</a></li>
+            <li class="active-page">login</li>
+            <li><img src="./assets/icons/instagram.png" alt="Instagram"></li>
+        </ul>
+    </nav>
+</header>
+
+<main id="login">
+    <h2>Log In</h2>
+
+    <form class="login-form">
+        <label for="email">E-mail</label>
+        <input type="email" id="email" required />
+
+        <label for="password">Mot de passe</label>
+        <input type="password" id="password" required />
+
+        <button type="submit">Se connecter</button>
+    </form>
+
+    <p class="error-message"></p>
+
+
+    <a href="#" class="forgot">Mot de passe oublié</a>
+</main>
+
+<footer>
+    <ul>
+        <li>Mentions légales</li>
+    </ul>
+</footer>
+<script src="./login.js"></script>
+
+</body>
+</html>
