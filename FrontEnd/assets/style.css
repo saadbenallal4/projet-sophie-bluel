@@ -47,6 +47,8 @@ table {
 	border-spacing: 0;
 }
 /** end reset css**/
+
+
 body {
 	max-width: 1140px;
 	margin:auto;
@@ -59,7 +61,6 @@ header {
 	justify-content: space-between;
 	margin: 50px 0
 }
-
 
 section {
 	margin: 50px 0
@@ -347,6 +348,7 @@ body.login-page footer ul li {
     text-align: center;
     padding: 12px 0;
     font-family: 'Syne', sans-serif;
+	
 }
 
 /* Bouton modifier */
@@ -382,6 +384,18 @@ body.login-page footer ul li {
     position: relative;
 }
 
+.modal-add-section {
+  display: none;
+}
+
+.modal-gallery-section {
+  display: block;
+}
+
+#preview-image {
+  display: none;
+}
+
 .close-modal {
     position: absolute;
     top: 20px;
@@ -411,6 +425,15 @@ body.login-page footer ul li {
     border-radius: 4px;
 }
 
+.modal-item {
+  position: relative;
+}
+
+.delete-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
 
 .modal-separator {
     width: 100%;

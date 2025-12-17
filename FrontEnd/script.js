@@ -1,196 +1,226 @@
+/*************************
+ * 1. CONSTANTES GLOBALES
+ *************************/
 const API_URL = "http://localhost:5678/api";
+const token = localStorage.getItem("token");
+
+/*************************
+ * 2. ÉTAT GLOBAL
+ *************************/
+let works = [];
+let categories = [];
+
+/*************************
+ * 3. SÉLECTEURS DOM
+ *************************/
 const gallery = document.querySelector(".gallery");
 const filtersContainer = document.querySelector(".filters");
+const modalOverlay = document.getElementById("modal-overlay");
+const modalGallery = document.querySelector(".modal-gallery");
 
-
-// Récupération des données
-
+/*************************
+ * 4. API
+ *************************/
 async function fetchWorks() {
   const response = await fetch(`${API_URL}/works`);
-  return await response.json();
+  works = await response.json();
 }
 
 async function fetchCategories() {
   const response = await fetch(`${API_URL}/categories`);
-  return await response.json();
+  categories = await response.json();
 }
 
-
-// Affichage de la galerie
-
-function displayWorks(works) {
+/*************************
+ * 5. AFFICHAGE GALERIE
+ *************************/
+function displayWorks(list) {
   gallery.innerHTML = "";
 
-  works.forEach(work => {
+  list.forEach(work => {
     const figure = document.createElement("figure");
 
-    const img = document.createElement("img");
-    img.src = work.imageUrl;
-    img.alt = work.title;
+    figure.innerHTML = `
+      <img src="${work.imageUrl}" alt="${work.title}">
+      <figcaption>${work.title}</figcaption>
+    `;
 
-    const figcaption = document.createElement("figcaption");
-    figcaption.textContent = work.title;
-
-    figure.appendChild(img);
-    figure.appendChild(figcaption);
     gallery.appendChild(figure);
   });
 }
 
+/*************************
+ * 6. FILTRES
+ *************************/
+function setupFilters() {
+  if (token) {
+    filtersContainer.style.display = "none";
+    return;
+  }
 
-// Boutons de filtres
+  filtersContainer.innerHTML = "";
 
-function installFilters(categories, works) {
-
-  // Bouton "Tous"
   const allBtn = document.createElement("button");
   allBtn.textContent = "Tous";
   allBtn.classList.add("filter-btn", "active");
-
   allBtn.addEventListener("click", () => {
     setActive(allBtn);
     displayWorks(works);
   });
-
   filtersContainer.appendChild(allBtn);
 
-  // Boutons catégories
-  categories.forEach(category => {
+  categories.forEach(cat => {
     const btn = document.createElement("button");
-    btn.textContent = category.name;
+    btn.textContent = cat.name;
     btn.classList.add("filter-btn");
 
     btn.addEventListener("click", () => {
       setActive(btn);
-      const filtered = works.filter(w => w.categoryId === category.id);
-      displayWorks(filtered);
+      displayWorks(works.filter(w => w.categoryId === cat.id));
     });
 
     filtersContainer.appendChild(btn);
   });
 }
 
+function setActive(activeBtn) {
+  document.querySelectorAll(".filter-btn").forEach(btn =>
+    btn.classList.remove("active")
+  );
+  activeBtn.classList.add("active");
+}
 
-function setActive(activeButton) {
-  const buttons = document.querySelectorAll(".filter-btn");
-  buttons.forEach(btn => btn.classList.remove("active"));
-  activeButton.classList.add("active");
+/*************************
+ * 7. MODE ÉDITION
+ *************************/
+function setupEditMode() {
+  const loginLink = document.querySelector("nav ul li:nth-child(3) a");
+
+  if (!token) {
+    loginLink.textContent = "login";
+    return;
+  }
+
+  // logout
+  loginLink.textContent = "logout";
+  loginLink.addEventListener("click", e => {
+    e.preventDefault();
+    localStorage.removeItem("token");
+    location.reload();
+  });
+
+  // bandeau noir
+  const banner = document.createElement("div");
+  banner.className = "edit-banner";
+  banner.innerHTML = `<p><i class="fa-regular fa-pen-to-square"></i> Mode édition</p>`;
+  document.body.prepend(banner);
+
+  // bouton modifier
+  const title = document.querySelector("#portfolio h2");
+  const editBtn = document.createElement("button");
+  editBtn.className = "edit-btn";
+  editBtn.innerHTML = `<i class="fa-regular fa-pen-to-square"></i> modifier`;
+  title.appendChild(editBtn);
+
+  editBtn.addEventListener("click", openModal);
+}
+
+/*************************
+ * 8. MODALE
+ *************************/
+function openModal() {
+  modalOverlay.style.display = "flex";
+  showGallerySection();
+  loadModalGallery();
+}
+
+function closeModal() {
+  modalOverlay.style.display = "none";
+}
+
+function showGallerySection() {
+  document.querySelector(".modal-gallery-section").style.display = "block";
+  document.querySelector(".modal-add-section").style.display = "none";
+}
+
+function showAddSection() {
+  document.querySelector(".modal-gallery-section").style.display = "none";
+  document.querySelector(".modal-add-section").style.display = "block";
+}
+
+function setupModalEvents() {
+  document.querySelector(".close-modal").addEventListener("click", closeModal);
+
+  modalOverlay.addEventListener("click", e => {
+    if (e.target === modalOverlay) closeModal();
+  });
+
+  document
+    .querySelector(".open-add-photo")
+    .addEventListener("click", showAddSection);
+
+  document
+    .querySelector(".back-arrow")
+    .addEventListener("click", showGallerySection);
+}
+
+function loadModalGallery() {
+  modalGallery.innerHTML = "";
+
+  works.forEach(work => {
+    const figure = document.createElement("figure");
+    figure.classList.add("modal-item");
+
+    figure.innerHTML = `
+      <img src="${work.imageUrl}" alt="${work.title}">
+      <button class="delete-btn" data-id="${work.id}">
+        <i class="fa-solid fa-trash-can"></i>
+      </button>
+    `;
+
+    const deleteBtn = figure.querySelector(".delete-btn");
+
+    deleteBtn.addEventListener("click", async (e) => {
+      e.stopPropagation();
+
+      const id = deleteBtn.dataset.id;
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(`${API_URL}/works/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        // Supprime dans la modale
+        figure.remove();
+
+        // Supprime dans la galerie principale (sans recharger)
+        works = works.filter(w => w.id !== Number(id));
+        displayWorks(works);
+      } else {
+        console.error("Erreur lors de la suppression");
+      }
+    });
+
+    modalGallery.appendChild(figure);
+  });
 }
 
 
-// Fonction principale
-
+/*************************
+ * 9. MAIN
+ *************************/
 async function main() {
-  const works = await fetchWorks();
-  const categories = await fetchCategories();
+  await fetchWorks();
+  await fetchCategories();
 
   displayWorks(works);
-  installFilters(categories, works);
+  setupFilters();
+  setupEditMode();
+  setupModalEvents();
 }
 
 main();
-
-
-const token = localStorage.getItem("token");
-
-function updateUIForLogin() {
-    const loginLink = document.querySelector("nav ul li:nth-child(3)");
-    const filters = document.querySelector(".filters");
-
-    if (token) {
-        // Remplace "login" par "logout"
-        loginLink.textContent = "logout";
-
-        // Ajoute le bandeau noir
-        const banner = document.createElement("div");
-        banner.className = "edit-banner";
-        banner.innerHTML = '<p><i class="fa-regular fa-pen-to-square"></i> Mode édition</p>';
-        document.body.prepend(banner);
-
-        // Cache les filtres
-        if (filters) filters.style.display = "none";
-
-        // Ajoute bouton "modifier"
-        const title = document.querySelector("#portfolio h2");
-        const editButton = document.createElement("button");
-        editButton.className = "edit-btn";
-        editButton.innerHTML = '<i class="fa-regular fa-pen-to-square"></i> modifier';
-        title.appendChild(editButton);
-
-        // Activation du logout
-        loginLink.addEventListener("click", function () {
-            localStorage.removeItem("token");
-            window.location.reload();
-        });
-
-    } else {
-        // Si pas connecté → rien de spécial
-        loginLink.textContent = "login";
-    }
-}
-updateUIForLogin();
-
-// === OUVERTURE DE LA MODALE ===
-const editBtn = document.querySelector(".edit-btn");
-const modalOverlay = document.getElementById("modal-overlay");
-const closeModal = document.querySelector(".close-modal");
-
-editBtn.addEventListener("click", () => {
-    modalOverlay.style.display = "flex";
-     document.querySelector(".modal-gallery-section").style.display = "block";
-    document.querySelector(".modal-add-section").style.display = "none";
-    loadModalGallery();
-});
-
-// === FERMETURE ===
-closeModal.addEventListener("click", () => {
-    modalOverlay.style.display = "none";
-});
-
-modalOverlay.addEventListener("click", (e) => {
-    if (e.target === modalOverlay) {
-        modalOverlay.style.display = "none";
-    }
-});
-
-const gallerySection = document.querySelector(".modal-gallery-section");
-const addSection = document.querySelector(".modal-add-section");
-const openAddPhotoBtn = document.querySelector(".open-add-photo");
-const backArrow = document.querySelector(".back-arrow");
-
-openAddPhotoBtn.addEventListener("click", () => {
-    gallerySection.style.display = "none";
-    addSection.style.display = "block";
-});
-
-backArrow.addEventListener("click", () => {
-    addSection.style.display = "none";
-    gallerySection.style.display = "block";
-});
-
-async function loadModalGallery() {
-    const response = await fetch("http://localhost:5678/api/works");
-    const works = await response.json();
-
-    const modalGallery = document.querySelector(".modal-gallery");
-    modalGallery.innerHTML = ""; // On vide pour éviter les doublons
-
-    works.forEach(work => {
-        const figure = document.createElement("figure");
-        figure.classList.add("modal-item");
-
-        figure.innerHTML = `
-            <img src="${work.imageUrl}" alt="${work.title}">
-            <button class="delete-btn" data-id="${work.id}">
-                <i class="fa-solid fa-trash-can"></i>
-            </button>
-        `;
-
-        modalGallery.appendChild(figure);
-    });
-}
-
-openModalButton.addEventListener("click", () => {
-    modal.style.display = "flex";
-    loadModalGallery(); //  charge toutes les photos
-});

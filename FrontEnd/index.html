@@ -8,6 +8,11 @@
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Work+Sans&display=swap" rel="stylesheet">
 	<meta name="description" content="">
+	<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+/>
+
 	<link rel="stylesheet" href="./assets/style.css">
 </head>
 <body>
@@ -77,13 +82,13 @@
         </div>
 
         <!-- Contenu Ajout Photo -->
-        <div class="modal-add-section" style="display:none;">
+        <div class="modal-add-section">
             <span class="back-arrow">←</span>
             <h3>Ajout photo</h3>
 
             <form id="add-photo-form">
                 <div class="add-photo-upload">
-                    <img id="preview-image" style="display:none;">
+                    <img id="preview-image">
                     <label for="photo-input" class="upload-btn">+ Ajouter photo</label>
                     <input type="file" id="photo-input" accept="image/*" hidden>
                     <p>jpg, png : 4mo max</p>
