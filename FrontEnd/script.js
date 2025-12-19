@@ -17,6 +17,11 @@ const gallery = document.querySelector(".gallery");
 const filtersContainer = document.querySelector(".filters");
 const modalOverlay = document.getElementById("modal-overlay");
 const modalGallery = document.querySelector(".modal-gallery");
+const addPhotoForm = document.getElementById("add-photo-form");
+const photoInput = document.getElementById("photo-input");
+const previewImage = document.getElementById("preview-image");
+const photoTitleInput = document.getElementById("photo-title");
+const photoCategorySelect = document.getElementById("photo-category");
 
 /*************************
  * 4. API
@@ -143,9 +148,21 @@ function showGallerySection() {
   document.querySelector(".modal-add-section").style.display = "none";
 }
 
+function populateCategorySelect() {
+  photoCategorySelect.innerHTML = "";
+
+  categories.forEach(cat => {
+    const option = document.createElement("option");
+    option.value = cat.id;
+    option.textContent = cat.name;
+    photoCategorySelect.appendChild(option);
+  });
+}
+
 function showAddSection() {
   document.querySelector(".modal-gallery-section").style.display = "none";
   document.querySelector(".modal-add-section").style.display = "block";
+  populateCategorySelect();
 }
 
 function setupModalEvents() {
@@ -209,6 +226,79 @@ function loadModalGallery() {
   });
 }
 
+function setupImagePreview() {
+  photoInput.addEventListener("change", () => {
+    const file = photoInput.files[0];
+    if (!file) return;
+
+    previewImage.src = URL.createObjectURL(file);
+    previewImage.style.display = "block";
+  });
+}
+
+function populateCategorySelect() {
+  photoCategorySelect.innerHTML = "";
+
+  categories.forEach(cat => {
+    const option = document.createElement("option");
+    option.value = cat.id;
+    option.textContent = cat.name;
+    photoCategorySelect.appendChild(option);
+  });
+}
+
+function setupAddPhotoForm() {
+  addPhotoForm.addEventListener("submit", async e => {
+    e.preventDefault();
+
+    const file = photoInput.files[0];
+    const title = photoTitleInput.value.trim();
+    const category = photoCategorySelect.value;
+
+    if (!file || !title || !category) {
+      alert("Tous les champs sont obligatoires");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("image", file);
+    formData.append("title", title);
+    formData.append("category", category);
+
+    const response = await fetch(`${API_URL}/works`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+      body: formData
+    });
+
+    if (!response.ok) {
+      alert("Erreur lors de l'ajout");
+      return;
+    }
+
+    const newWork = await response.json();
+
+    works.push(newWork);
+    displayWorks(works);
+    loadModalGallery();
+    showGallerySection();
+    addPhotoForm.reset();
+    previewImage.style.display = "none";
+  });
+}
+
+photoInput.addEventListener("change", () => {
+  const file = photoInput.files[0];
+  if (!file) return;
+
+  previewImage.src = URL.createObjectURL(file);
+  previewImage.style.display = "block";
+});
+
+
+
 
 /*************************
  * 9. MAIN
@@ -221,6 +311,9 @@ async function main() {
   setupFilters();
   setupEditMode();
   setupModalEvents();
+  setupImagePreview();
+  setupAddPhotoForm();
+
 }
 
 main();
